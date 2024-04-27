@@ -1,0 +1,274 @@
+=============================================
+python assignment (graded)
+
+Name:-Rajpreet Singh
+batch:-devops batch (5)
+============================================
+
+Q1. In DevOps, security is a crucial aspect, and ensuring strong passwords is essential. Create a Python script to check the password strength. 
+
+●       Implement a Python function called check_password_strength that takes a password string as input.
+
+●       The function should check the password against the following criteria:
+
+○       Minimum length: The password should be at least 8 characters long.
+
+○       Contains both uppercase and lowercase letters.
+
+○       Contains at least one digit (0-9).
+
+○       Contains at least one special character (e.g., !, @, #, $, %).
+
+●       The function should return a boolean value indicating whether the password meets the criteria.
+
+●       Write a script that takes user input for a password and calls the check_password_strength function to validate it.
+
+●       Provide appropriate feedback to the user based on the strength of the password.
+
+
+Answer code:-
+
+
+import re
+
+def check_password_strength(password):
+    
+    if len(password) < 8:
+        return False
+    
+        if not re.search("[a-z]", password):
+        return False
+    if not re.search("[A-Z]", password):
+        return False
+    if not re.search("[0-9]", password):
+        return False
+    if not re.search("[!@#$%^&*()_+{}:<>?]", password):
+        return False
+    
+    # If all criteria are met, return True
+    return True
+
+def main():
+    password = input("Enter your password: ")
+    
+    if check_password_strength(password):
+        print("Password is strong!")
+    else:
+        print("Password is weak. Please ensure it has at least 8 characters, both uppercase and lowercase letters, "
+              "at least one digit, and at least one special character.")
+
+if __name__ == "__main__":
+    main()
+========================================================================================================================
+Q2. As a DevOps engineer, it is crucial to monitor the health and performance of servers. Write a Python program to monitor the health of the CPU. Few pointers to be noted:
+
+●       The program should continuously monitor the CPU usage of the local machine.
+
+●       If the CPU usage exceeds a predefined threshold (e.g., 80%), an alert message should be displayed.
+
+●       The program should run indefinitely until interrupted.
+
+●       The program should include appropriate error handling to handle exceptions that may arise during the monitoring process.
+
+Hint:
+
+●       The psutil library in Python can be used to retrieve system information, including CPU usage. You can install it using pip install psutil.
+
+●       Use the psutil.cpu_percent() method to get the current CPU usage as a percentage.
+
+Expected Output:
+
+Monitoring CPU usage...
+
+Alert! CPU usage exceeds threshold: 85%
+
+Alert! CPU usage exceeds threshold: 90%
+
+... (continues until interrupted) 
+
+
+Answer code:-
+
+
+2)import psutil
+import time
+
+def monitor_cpu(threshold):
+    print("Monitoring CPU usage...")
+    try:
+        while True:
+            cpu_usage = psutil.cpu_percent(interval=1)
+            if cpu_usage > threshold:
+                print(f"Alert! CPU usage exceeds threshold: {cpu_usage}%")
+    except KeyboardInterrupt:
+        print("\nMonitoring stopped.")
+
+if __name__ == "__main__":
+    threshold = 85  # Define the threshold for CPU usage
+    monitor_cpu(threshold)
+
+=========================================================================================================================================
+Q3. In DevOps, automating configuration management tasks is essential for maintaining consistency and managing infrastructure efficiently.
+
+●       The program should read a configuration file (you can provide them with a sample configuration file).
+
+●       It should extract specific key-value pairs from the configuration file.
+
+●       The program should store the extracted information in a data structure (e.g., dictionary or list).
+
+●       It should handle errors gracefully in case the configuration file is not found or cannot be read.
+
+●       Finally save the output file data as JSON data in the database.
+
+●       Create a GET request to fetch this information.
+
+Sample Configuration file: 
+
+[Database]
+
+host = localhost
+
+port = 3306
+
+username = admin
+
+password = secret
+
+ 
+
+[Server]
+
+address = 192.168.0.1
+
+port = 8080
+
+ 
+
+Sample Output: 
+
+Configuration File Parser Results:
+
+Database:
+
+- host: localhost
+
+- port: 3306
+
+- username: admin
+
+- password: secret
+
+ 
+
+Server:
+
+- address: 192.168.0.1
+
+- port: 8080 
+
+
+
+Answer code :-
+
+ import configparser
+import json
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+def parse_config_file(config_file):
+    config = configparser.ConfigParser()
+    try:
+        config.read(config_file)
+        config_data = {}
+        for section in config.sections():
+            config_data[section] = dict(config.items(section))
+        return config_data
+    except Exception as e:
+        print(f"Error reading configuration file: {e}")
+        return None
+
+def save_to_database(data):
+    # Here, you would implement code to save the data to your database as JSON.
+    # For demonstration purposes, let's just print the data.
+    print("Saving data to database:", data)
+
+@app.route('/config', methods=['GET'])
+def get_config_data():
+    config_data = parse_config_file('sample_config.ini')
+    if config_data:
+        return jsonify(config_data)
+    else:
+        return jsonify({"error": "Failed to retrieve configuration data"})
+
+if __name__ == '__main__':
+    config_data = parse_config_file('sample_config.ini')
+    if config_data:
+        print("Configuration File Parser Results:")
+        for section, values in config_data.items():
+            print(section + ":")
+            for key, value in values.items():
+                print(f"- {key}: {value}")
+    save_to_database(config_data)
+    app.run(debug=True)  # Run Flask app for GET request
+====================================================================================================================================
+Q4. In DevOps, performing regular backups of important files is crucial:
+
+●       Implement a Python script called backup.py that takes a source directory and a destination directory as command-line arguments.
+
+●       The script should copy all files from the source directory to the destination directory.
+
+●       Before copying, check if the destination directory already contains a file with the same name. If so, append a timestamp to the file name to ensure uniqueness.
+
+●       Handle errors gracefully, such as when the source directory or destination directory does not exist.
+
+Sample Command:
+
+python backup.py /path/to/source /path/to/destination
+
+By running the script with the appropriate source and destination directories, it should create backups of the files in the source directory, ensuring unique file names in the destination directory.
+
+
+
+
+Answer code :- 
+
+import os
+import shutil
+import sys
+from datetime import datetime
+
+def backup_files(source_dir, dest_dir):
+        if not os.path.exists(source_dir):
+        print(f"Source directory '{source_dir}' does not exist.")
+        return
+
+        if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+
+        files = os.listdir(source_dir)
+
+        for file_name in files:
+        source_file_path = os.path.join(source_dir, file_name)
+        dest_file_path = os.path.join(dest_dir, file_name)
+
+                if os.path.exists(dest_file_path):
+                        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+            file_name, file_extension = os.path.splitext(file_name)
+            dest_file_path = os.path.join(dest_dir, f"{file_name}_{timestamp}{file_extension}")
+
+                try:
+            shutil.copy2(source_file_path, dest_file_path)
+            print(f"File '{file_name}' backed up successfully.")
+        except Exception as e:
+            print(f"Error while copying '{file_name}': {e}")
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: python backup.py <source_directory> <destination_directory>")
+    else:
+        source_directory = sys.argv[1]
+        destination_directory = sys.argv[2]
+        backup_files(source_directory, destination_directory)
+====================================================================================================================================
+
